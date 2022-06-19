@@ -147,7 +147,12 @@ class _DesignState extends State<Design> {
             ),
           ],
         ));
-    return widgets.toList().sublist(0, 4);
+    if (widgets.toList().length > 4) {
+      return widgets.toList().sublist(0, 4);
+    } else if (widgets.toList().length == 0) {
+      return [const Text('no GIFs in this secction')];
+    }
+    return widgets.toList();
   }
 
   List<Widget> getImagesOfTheme(theme) {
