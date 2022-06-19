@@ -41,7 +41,7 @@ class _MyTerrainPage extends State<TerrainPage> {
     return InkWell(
       onTap: () => changeState(i, j),
       child: Container(
-        width: 300 / matrix.length,
+        width: 350 / matrix.length,
         height: 350 / matrix.length,
         color: matrix[i][j] == 0 ? Colors.blue : Colors.green,
         alignment: Alignment.center,
