@@ -30,9 +30,9 @@ class _MyTerrainPage extends State<TerrainPage> {
       int i = row.key;
       return TableRow(
           children: row.value.asMap().entries.map<Widget>((v) {
-            int j = v.key;
-            return getBlock(i, j, matrix);
-          }).toList());
+        int j = v.key;
+        return getBlock(i, j, matrix);
+      }).toList());
     }).toList();
     return table;
   }
@@ -41,8 +41,8 @@ class _MyTerrainPage extends State<TerrainPage> {
     return InkWell(
       onTap: () => changeState(i, j),
       child: Container(
-        width: 400 / matrix.length,
-        height: 400 / matrix.length,
+        width: 300 / matrix.length,
+        height: 350 / matrix.length,
         color: matrix[i][j] == 0 ? Colors.blue : Colors.green,
         alignment: Alignment.center,
         child: Text(matrix[i][j].toString()),
@@ -63,29 +63,29 @@ class _MyTerrainPage extends State<TerrainPage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Tap on any tile to change state', style: TextStyle(fontSize: 18)),
-            const Divider(color: Colors.transparent,),
-            SizedBox(
-              height: 400,
-              width: 400,
-              child: matrix == null
-                  ? const Placeholder()
-                  : Table(
-                border: TableBorder.all(color: Colors.black12),
-                children: getTable(matrix),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text('Number Of Islands: $numberOfIslands'),
-            ),
-            SizedBox(
-                width: 400,
-                child: Slider(
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Center(
+                    child: const Text('Tap on any tile to change state',
+                        style: TextStyle(fontSize: 18))),
+                const Divider(
+                  color: Colors.transparent,
+                ),
+                matrix == null
+                    ? const Placeholder()
+                    : Table(
+                        border: TableBorder.all(color: Colors.black12),
+                        children: getTable(matrix),
+                      ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text('Number Of Islands: $numberOfIslands'),
+                ),
+                Slider(
                   min: 1,
                   max: 20,
                   divisions: 19,
@@ -96,25 +96,27 @@ class _MyTerrainPage extends State<TerrainPage> {
                       rowsNumber = value;
                     });
                   },
-                )),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Text('Number of Rows: $rowsNumber'),
-            ),
-            SizedBox(
-              height: 40,
-              child: ElevatedButton.icon(
-                onPressed: () => setState(() {
-                  createMatrix();
-                }),
-                label: Text(
-                  'Create Terrain',
                 ),
-                icon: Icon(Icons.accessibility),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Text('Number of Rows: $rowsNumber'),
+                ),
+                SizedBox(
+                  height: 40,
+                  child: ElevatedButton.icon(
+                    onPressed: () => setState(() {
+                      createMatrix();
+                    }),
+                    label: Text(
+                      'Create Terrain',
+                    ),
+                    icon: Icon(Icons.create),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

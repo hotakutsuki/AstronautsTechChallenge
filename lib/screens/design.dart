@@ -87,9 +87,9 @@ class _DesignState extends State<Design> {
           children: [
             Divider(color: Colors.transparent),
             ClipRRect(
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(16),
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+                padding: EdgeInsets.all(8),
                 width: double.infinity,
                 height: 150,
                 color: const Color.fromARGB(10, 0, 0, 0),
@@ -105,7 +105,7 @@ class _DesignState extends State<Design> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          width: 150,
+                          width: 140,
                           height: 105,
                           child: Stack(children: [
                             ClipRRect(
@@ -130,7 +130,7 @@ class _DesignState extends State<Design> {
                           ]),
                         ),
                         SizedBox(
-                          width: 250,
+                          width: 180,
                           child: Text(
                             imageObj['title'],
                             style: const TextStyle(
@@ -171,15 +171,8 @@ class _DesignState extends State<Design> {
             }
             if (snapshot.connectionState == ConnectionState.done) {
               Map<dynamic, dynamic> mydata = snapshot.data as Map;
-              print(mydata['data'][0]['url']);
-              return ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: 0,
-                  maxHeight: 680,
-                ),
-                child: ListView(
-                  children: getImagesAsWidgets(mydata),
-                ),
+              return Column(
+                children: getImagesAsWidgets(mydata),
               );
             } else {
               return Center(child: CircularProgressIndicator());
@@ -253,8 +246,7 @@ class _DesignState extends State<Design> {
               ],
             ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: 16),
-              height: 50,
+              height: 60,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: _chips.asMap().entries.map<Widget>((c) {
