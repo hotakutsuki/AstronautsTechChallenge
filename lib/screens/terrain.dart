@@ -83,7 +83,11 @@ class _MyTerrainPage extends State<TerrainPage> {
                       ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text('Number Of Islands: $numberOfIslands'),
+                  child: Text(
+                    'Number of Islands: $numberOfIslands',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 Slider(
                   min: 1,
