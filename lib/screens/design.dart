@@ -94,7 +94,7 @@ class _DesignState extends State<Design> {
                       child: const Icon(Icons.more_horiz),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
@@ -122,8 +122,8 @@ class _DesignState extends State<Design> {
                                     Colors.orange)),
                           ]),
                         ),
-                        SizedBox(
-                          width: 180,
+                        const SizedBox(width: 20,),
+                        Expanded(
                           child: Text(
                             imageObj['title'].isNotEmpty
                                 ? imageObj['title']
