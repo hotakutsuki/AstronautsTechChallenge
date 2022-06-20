@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import '../utils/utils.dart';
 
 class TerrainPage extends StatefulWidget {
@@ -69,8 +68,8 @@ class _MyTerrainPage extends State<TerrainPage> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                Center(
-                    child: const Text('Tap on any tile to change state',
+                const Center(
+                    child: Text('Tap on any tile to change its state',
                         style: TextStyle(fontSize: 18))),
                 const Divider(
                   color: Colors.transparent,
@@ -111,7 +110,7 @@ class _MyTerrainPage extends State<TerrainPage> {
                     onPressed: () => setState(() {
                       createMatrix();
                     }),
-                    label: Text(
+                    label: const Text(
                       'Create Terrain',
                     ),
                     icon: Icon(Icons.create),

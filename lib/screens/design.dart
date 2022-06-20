@@ -82,7 +82,7 @@ class _DesignState extends State<Design> {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 width: double.infinity,
                 height: 150,
                 color: const Color.fromARGB(10, 0, 0, 0),
@@ -91,13 +91,13 @@ class _DesignState extends State<Design> {
                     Container(
                       width: double.infinity,
                       alignment: Alignment.centerRight,
-                      child: Icon(Icons.more_horiz),
+                      child: const Icon(Icons.more_horiz),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 140,
                           height: 105,
                           child: Stack(children: [
@@ -172,7 +172,7 @@ class _DesignState extends State<Design> {
           future: getGiphyData(theme),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return Center(child: const Text('Error'));
+              return const Center(child: Text('Error'));
             }
             if (snapshot.connectionState == ConnectionState.done) {
               Map<dynamic, dynamic> mydata = snapshot.data as Map;
@@ -224,6 +224,8 @@ class _DesignState extends State<Design> {
             child: ListBody(
               children: <Widget>[
                 TextField(
+                  onSubmitted: (e) {addNewSearch();} ,
+                  autofocus: true,
                   controller: _controller,
                   decoration: const InputDecoration(hintText: 'new Search'),
                 ),
@@ -233,22 +235,24 @@ class _DesignState extends State<Design> {
           actions: <Widget>[
             TextButton(
               child: const Text('Add'),
-              onPressed: () {
-                var newSearch = _controller.text.trim();
-                if (newSearch.isNotEmpty) {
-                  setState(() {
-                    _chips.insert(0, newSearch);
-                    _selectedChips.insert(0, true);
-                  });
-                  _controller.clear();
-                  Navigator.of(context).pop();
-                }
-              },
+              onPressed: addNewSearch,
             ),
           ],
         );
       },
     );
+  }
+
+  void addNewSearch() {
+    var newSearch = _controller.text.trim();
+    if (newSearch.isNotEmpty) {
+      setState(() {
+        _chips.insert(0, newSearch);
+        _selectedChips.insert(0, true);
+      });
+      _controller.clear();
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -299,13 +303,13 @@ class _DesignState extends State<Design> {
                 appBarButtons(Icons.add, Colors.black87, _showMyDialog)
               ],
             ),
-            Container(
+            SizedBox(
               height: 60,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 8),
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
                     child: ChoiceChip(
                         shape: const RoundedRectangleBorder(
                             borderRadius:
