@@ -14,23 +14,16 @@ class Design extends StatefulWidget {
 class _DesignState extends State<Design> {
   List<String> _chips = [];
   List<bool> _selectedChips = [];
+  final TextEditingController _controller = TextEditingController();
 
   initState() {
-    _chips = [
-      'All',
-      'Happy hours',
-      'Drinks',
-      'Beer',
-      'cocktails',
-      'Wine',
-      'Extras'
-    ];
-    _selectedChips = List.generate(_chips.length, (i) => i == 1);
+    _chips = ['Happy hours', 'Drinks', 'Beer', 'Cocktails', 'Wine', 'Extras'];
+    _selectedChips = List.generate(_chips.length, (i) => i == 0);
   }
 
-  Widget appBarButtons(icon, [color]) {
+  Widget appBarButtons(icon, [color, function]) {
     return Container(
-      margin: EdgeInsets.all(4),
+      margin: const EdgeInsets.all(4),
       decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.white,
@@ -42,7 +35,7 @@ class _DesignState extends State<Design> {
             )
           ]),
       child: IconButton(
-          onPressed: () => {},
+          onPressed: () => {function()},
           icon: Icon(
             icon,
             color: color ?? Colors.grey,
@@ -52,11 +45,11 @@ class _DesignState extends State<Design> {
 
   Widget opChip(text, i) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       child: ChoiceChip(
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(16))),
-          labelPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+          labelPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
           elevation: 5,
           backgroundColor: Colors.white,
           selectedColor: Colors.orange,
@@ -85,7 +78,7 @@ class _DesignState extends State<Design> {
   List<Widget> getImagesAsWidgets(Map<dynamic, dynamic> myData) {
     var widgets = myData['data'].map<Widget>((imageObj) => Column(
           children: [
-            Divider(color: Colors.transparent),
+            const Divider(color: Colors.transparent),
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Container(
@@ -132,7 +125,9 @@ class _DesignState extends State<Design> {
                         SizedBox(
                           width: 180,
                           child: Text(
-                            imageObj['title'],
+                            imageObj['title'].isNotEmpty
+                                ? imageObj['title']
+                                : 'No title found',
                             style: const TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
@@ -155,7 +150,7 @@ class _DesignState extends State<Design> {
     return widgets.toList();
   }
 
-  List<Widget> getImagesOfTheme(theme) {
+  List<Widget> getImagesOfTheme(theme, [i]) {
     return [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -165,14 +160,19 @@ class _DesignState extends State<Design> {
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87)),
-          appBarButtons(Icons.delete_outline, Colors.black87)
+          appBarButtons(Icons.delete_outline, Colors.black87, () {
+            setState(() {
+              _chips.removeAt(i);
+              _selectedChips.removeAt(i);
+            });
+          })
         ],
       ),
       FutureBuilder(
           future: getGiphyData(theme),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return Center(child: Text('Error'));
+              return Center(child: const Text('Error'));
             }
             if (snapshot.connectionState == ConnectionState.done) {
               Map<dynamic, dynamic> mydata = snapshot.data as Map;
@@ -180,7 +180,7 @@ class _DesignState extends State<Design> {
                 children: getImagesAsWidgets(mydata),
               );
             } else {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
           })
     ];
@@ -191,22 +191,71 @@ class _DesignState extends State<Design> {
     _selectedChips.asMap().entries.map((e) {
       int i = e.key;
       if (e.value) {
-        result.addAll(getImagesOfTheme(_chips[i]));
+        result.addAll(getImagesOfTheme(_chips[i], i));
       }
     }).toList();
     if (result.isEmpty) {
-      return [const Center(
-        child: Text('Select one chip'),
-      )];
+      return [
+        const Center(
+          child: Text('Select one chip'),
+        )
+      ];
     }
     return result;
+  }
+
+  bool getAllSelected() {
+    bool result = true;
+    for (var e in _selectedChips) {
+      if (!e) {
+        result = false;
+      }
+    }
+    return result;
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add new Favorite'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  controller: _controller,
+                  decoration: const InputDecoration(hintText: 'new Search'),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Add'),
+              onPressed: () {
+                var newSearch = _controller.text.trim();
+                if (newSearch.isNotEmpty) {
+                  setState(() {
+                    _chips.insert(0, newSearch);
+                    _selectedChips.insert(0, true);
+                  });
+                  _controller.clear();
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.black,
         ),
         shadowColor: Colors.transparent,
@@ -247,16 +296,39 @@ class _DesignState extends State<Design> {
                         fontSize: 42,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87)),
-                appBarButtons(Icons.add, Colors.black87)
+                appBarButtons(Icons.add, Colors.black87, _showMyDialog)
               ],
             ),
             Container(
               height: 60,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: _chips.asMap().entries.map<Widget>((c) {
-                  return opChip(c.value, c.key);
-                }).toList(),
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 8),
+                    child: ChoiceChip(
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(16))),
+                        labelPadding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 16),
+                        elevation: 5,
+                        backgroundColor: Colors.white,
+                        selectedColor: Colors.orange,
+                        label: const Text('All'),
+                        selected: getAllSelected(),
+                        onSelected: (v) {
+                          setState(() {
+                            _selectedChips = _selectedChips
+                                .map((e) => !getAllSelected())
+                                .toList();
+                          });
+                        }),
+                  ),
+                  ..._chips.asMap().entries.map<Widget>((c) {
+                    return opChip(c.value, c.key);
+                  }).toList()
+                ],
               ),
             ),
             Expanded(
